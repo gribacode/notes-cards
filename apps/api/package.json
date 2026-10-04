@@ -6,10 +6,13 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "typecheck": "tsc --noEmit",
+    "pretest": "npm run build -w @notes-cards/core",
     "test": "jest",
     "lint:arch": "depcruise src --ignore-known",
     "postinstall": "prisma generate",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "prebuild": "npm run build -w @notes-cards/core",
+    "pretypecheck": "npm run build -w @notes-cards/core"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

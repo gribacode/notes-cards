@@ -5,6 +5,7 @@ import { CommonModule } from './common/common.module'
 import { validateEnv } from './config/env.validation'
 import { HealthModule } from './health/health.module'
 import { PrismaModule } from './prisma/prisma.module'
+import { ProgressModule } from './progress/progress.module'
 import { UsersModule } from './users/users.module'
 
 @Module({
@@ -15,6 +16,7 @@ import { UsersModule } from './users/users.module'
     HealthModule,
     AuthModule,
     UsersModule,
+    ProgressModule,
   ],
 })
 export class AppModule {}

@@ -4,13 +4,14 @@ const DAY_MS = 24 * 60 * 60 * 1000
 const LADDER_DAYS = [1, 3, 7, 21, 60] as const
 const LAST_STAGE = LADDER_DAYS.length - 1
 const FIRST_INTERVAL_DAYS = 1
+const MAX_INTERVAL_DAYS = 3650
 
 function nextStep(prev: CardState): { stage: number; intervalDays: number } {
   const pastLadder = prev.stage >= LAST_STAGE
-  if (pastLadder) return { stage: LAST_STAGE, intervalDays: prev.intervalDays * 2 }
+  if (pastLadder) return { stage: LAST_STAGE, intervalDays: Math.min(prev.intervalDays * 2, MAX_INTERVAL_DAYS) }
 
   const stage = prev.stage + 1
-  return { stage, intervalDays: LADDER_DAYS[stage] ?? prev.intervalDays * 2 }
+  return { stage, intervalDays: LADDER_DAYS[stage] ?? Math.min(prev.intervalDays * 2, MAX_INTERVAL_DAYS) }
 }
 
 export function applyAnswer(prev: CardState | undefined, cardId: string, known: boolean, now: Date): CardState {

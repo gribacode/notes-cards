@@ -71,4 +71,13 @@ describe('applyAnswer', () => {
     const prev = { ...applyAnswer(undefined, 'c1', true, start), hidden: true }
     expect(applyAnswer(prev, 'c1', true, start).hidden).toBe(true)
   })
+
+  it('caps the interval so a long streak keeps dueAt a valid date', () => {
+    const state = Array.from({ length: 100 }).reduce<CardState | undefined>(
+      (prev) => applyAnswer(prev, 'c1', true, start),
+      undefined,
+    )!
+    expect(state.intervalDays).toBe(3650)
+    expect(Number.isNaN(Date.parse(state.dueAt))).toBe(false)
+  })
 })

@@ -1,14 +1,18 @@
 {
   "name": "notes-cards",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "concurrently -n web,api -c cyan,magenta \"npm run dev -w @notes-cards/web\" \"npm run dev -w @notes-cards/api\"",
     "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint:arch": "npm run lint:arch --workspaces --if-present",
-    "check": "npm run lint && npm run lint:arch && npm run typecheck && npm run test"
+    "check": "npm run build:core && npm run lint && npm run lint:arch && npm run typecheck && npm run test",
+    "build:core": "npm run build -w @notes-cards/core"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
