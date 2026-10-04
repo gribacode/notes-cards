@@ -7,6 +7,7 @@ const validEnv = {
   GITHUB_CLIENT_SECRET: 'secret',
   GITHUB_CALLBACK_URL: 'http://localhost:3000/api/auth/github/callback',
   WEB_URL: 'http://localhost:5173',
+  AI_KEY_SECRET: Buffer.alloc(32, 7).toString('base64'),
 }
 
 describe('validateEnv', () => {
@@ -28,5 +29,10 @@ describe('validateEnv', () => {
 
   it('rejects a missing DATABASE_URL', () => {
     expect(() => validateEnv({ ...validEnv, DATABASE_URL: undefined })).toThrow(/DATABASE_URL/)
+  })
+
+  it('rejects an AI_KEY_SECRET that does not decode to 32 bytes', () => {
+    expect(() => validateEnv({ ...validEnv, AI_KEY_SECRET: Buffer.alloc(16).toString('base64') })).toThrow(/AI_KEY_SECRET/)
+    expect(() => validateEnv({ ...validEnv, AI_KEY_SECRET: undefined })).toThrow(/AI_KEY_SECRET/)
   })
 })

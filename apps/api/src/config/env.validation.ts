@@ -1,9 +1,23 @@
 import { plainToInstance, Transform } from 'class-transformer'
-import { IsBoolean, IsInt, IsString, IsUrl, Max, Min, MinLength, validateSync } from 'class-validator'
+import { IsBoolean, IsInt, IsString, IsUrl, Max, Min, MinLength, registerDecorator, validateSync } from 'class-validator'
 
 const DEFAULT_PORT = 3000
 const MIN_JWT_SECRET_LENGTH = 32
 const MAX_PORT = 65535
+const AI_KEY_SECRET_BYTES = 32
+
+function IsBase64Bytes(byteLength: number) {
+  return (target: object, propertyName: string) =>
+    registerDecorator({
+      name: 'isBase64Bytes',
+      target: target.constructor,
+      propertyName,
+      options: { message: `${propertyName} must be base64 of exactly ${byteLength} bytes (openssl rand -base64 32)` },
+      validator: {
+        validate: (value: unknown) => typeof value === 'string' && Buffer.from(value, 'base64').length === byteLength,
+      },
+    })
+}
 
 function parseBoolean({ value }: { value: unknown }): unknown {
   if (value === 'true') return true
@@ -27,6 +41,9 @@ export class Env {
   @IsString()
   @MinLength(1)
   GITHUB_CLIENT_SECRET!: string
+
+  @IsBase64Bytes(AI_KEY_SECRET_BYTES)
+  AI_KEY_SECRET!: string
 
   @IsUrl({ require_tld: false })
   GITHUB_CALLBACK_URL!: string

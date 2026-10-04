@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 import { AppModule } from '../src/app.module'
 import { configureApp } from '../src/app.setup'
 import { GithubClient, type GithubUser } from '../src/auth/github.client'
+import { AiProviderFactory } from '../src/ai/providers/provider-factory'
 import { PrismaService } from '../src/prisma/prisma.service'
 
 export const FAKE_GITHUB_ACCESS_TOKEN = 'gho_fake_access_token_must_never_leak'
@@ -30,12 +31,15 @@ export interface TestApp {
   github: FakeGithubClient
 }
 
-export async function createTestApp(): Promise<TestApp> {
+export interface TestAppOptions {
+  aiProviders?: Pick<AiProviderFactory, 'create'>
+}
+
+export async function createTestApp({ aiProviders }: TestAppOptions = {}): Promise<TestApp> {
   const github = new FakeGithubClient()
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
-    .overrideProvider(GithubClient)
-    .useValue(github)
-    .compile()
+  const builder = Test.createTestingModule({ imports: [AppModule] }).overrideProvider(GithubClient).useValue(github)
+  if (aiProviders) builder.overrideProvider(AiProviderFactory).useValue(aiProviders)
+  const moduleRef = await builder.compile()
   const app = moduleRef.createNestApplication()
   configureApp(app)
   await app.init()
