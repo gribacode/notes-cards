@@ -1,13 +1,17 @@
 import { NestFactory } from '@nestjs/core'
+import { ConfigService } from '@nestjs/config'
 import { AppModule } from './app.module'
 import { configureApp } from './app.setup'
-
-const DEFAULT_PORT = 3000
+import type { Env } from './config/env.validation'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { abortOnError: false })
   configureApp(app)
-  await app.listen(process.env.PORT ?? DEFAULT_PORT)
+  app.enableShutdownHooks()
+  await app.listen(app.get<ConfigService<Env, true>>(ConfigService).get('PORT', { infer: true }))
 }
 
-void bootstrap()
+bootstrap().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : error)
+  process.exit(1)
+})

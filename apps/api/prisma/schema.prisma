@@ -1,0 +1,73 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/prisma/generated"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  githubId  Int      @unique
+  login     String
+  avatarUrl String
+  settings  Json
+  createdAt DateTime @default(now())
+
+  cardStates CardState[]
+  reviews    Review[]
+  aiKey      AiKey?
+  aiCards    AiCard[]
+}
+
+model CardState {
+  userId       String
+  cardId       String
+  stage        Int
+  intervalDays Int
+  dueAt        DateTime
+  correct      Int
+  wrong        Int
+  hidden       Boolean  @default(false)
+  introducedAt DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, cardId])
+}
+
+model Review {
+  id             String   @id
+  userId         String
+  cardId         String
+  known          Boolean
+  answeredAt     DateTime
+  firstInSession Boolean
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, answeredAt])
+}
+
+model AiKey {
+  userId     String   @id
+  provider   String
+  model      String
+  ciphertext String
+  iv         String
+  authTag    String
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiCard {
+  id          String   @id @default(cuid())
+  userId      String
+  notePath    String
+  contentHash String
+  cards       Json
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notePath, contentHash])
+}

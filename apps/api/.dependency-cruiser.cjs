@@ -87,7 +87,7 @@ module.exports = {
       "path": "node_modules"
     },
     "exclude": {
-      "path": "(^|/)(dist|build|\\.next|coverage)/"
+      "path": "(^|/)(dist|build|\\.next|coverage)/|^src/prisma/generated/"
     },
     "tsPreCompilationDeps": true,
     "tsConfig": {

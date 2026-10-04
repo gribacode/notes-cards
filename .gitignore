@@ -4,3 +4,4 @@ dist/
 .env.*
 !.env.example
 .superpowers/
+apps/api/src/prisma/generated/
