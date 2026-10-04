@@ -17,4 +17,8 @@ export default tseslint.config(
     files: ['apps/api/**/*.ts', '**/*.config.{js,ts}'],
     languageOptions: { globals: globals.node },
   },
+  {
+    files: ['**/*.cjs'],
+    languageOptions: { globals: globals.node, sourceType: 'commonjs' },
+  },
 )
