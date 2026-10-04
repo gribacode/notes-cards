@@ -1,2 +1,6 @@
 export { cardId, parseNote } from './cards/parseNote'
 export type { Card, ParsedNote } from './cards/types'
+export { buildSession } from './schedule/buildSession'
+export { applyAnswer } from './schedule/leitner'
+export type { CardState, Review } from './schedule/types'
+export { streak } from './stats/streak'
